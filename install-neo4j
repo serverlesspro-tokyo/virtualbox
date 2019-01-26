@@ -84,6 +84,12 @@ dbms.connector.http.listen_address=0.0.0.0:7474
 firewall-cmd --permanent --zone=public --add-port=7473/tcp 
 firewall-cmd --permanent --zone=public --add-port=7474/tcp 
 firewall-cmd --permanent --zone=public --add-port=7867/tcp 
+firewall-cmd --reload
+
+10. Vagrant file/open port
+  config.vm.network "neo4j", guest: 7474, host: 7474, host_ip: "127.0.0.1"
+  config.vm.network "neo4j_bolt", guest: 7687, host: 7687, host_ip: "127.0.0.1"
+  config.vm.network "neo4j_ssl", guest: 7473, host: 7473, host_ip: "127.0.0.1"
 
 10. http://127.0.0.1:7474
 
