@@ -1,0 +1,38 @@
+1. download  streamsets-datacollector-3.7.1 rpm tar file.
+wget https://s3-us-west-2.amazonaws.com/archives.streamsets.com/datacollector/3.7.1/rpm/el7/streamsets-datacollector-3.7.1-el7-all-rpms.tar
+
+2. sudo tar -xzf streamsets-datacollector-3.7.1-el7-all-rpms.tar
+
+3. sudo yum localinstall /home/ec2-user/StreamSets/streamsets-datacollector-3.7.1-el7-all-rpms/streamsets*
+
+4. start service
+sudo systemctl enable sdc
+sudo systemctl start sdc
+
+5. ulimit -n
+
+6. cd /etc/security
+
+7. sudo cp limits.conf orig_limits.conf
+
+8. sudo vi limits.conf
+*               hard    nofile          40000
+*               soft    nofile          40000
+
+9. ulimit -n
+
+10. sudo systemctl daemon-reload
+
+11. create test data folder and do test	
+sudo mkdir /opt/streamsets-datacollector/SampleData
+sudo vi /opt/streamsets-datacollector/SampleData/TestFile.csv
+1,Hello
+2,World
+
+12. sudo systemctl start sdc
+
+13. http://localhost:18630/
+----------------------------------
+#ssh for ec2-user sample
+#ssh -N -p 22 ec2-user@ -i /≤name_of_pem>.pem -L 18630:localhost:18630
+
