@@ -1,0 +1,37 @@
+1. config ja
+ localectl list-locales | grep -i ja
+ 
+ if not exist, run
+ localedef -f UTF-8 -i ja_JP ja__JP
+
+2. localectl set-locale LANG=ja_JP.utf8
+
+3. Change keyboard
+     localectl list-keymaps | grep "jp106"
+     
+     if not, yum install kbd  
+     
+     localectl set-keymap jp106
+
+5. locad locale config
+     source /etc/locale.conf
+
+6. localectl status
+      System Locale: LANG=ja_JP.utf8
+       VC Keymap: jp106
+      X11 Layout: jp
+       X11 Model: jp106
+     X11 Options: terminate:ctrl_alt_bksp
+      
+7. Change timezone   
+   hwclock -s --localtime
+   timedatectl set-local-rtc true
+   timedatectl list-timezones | grep Tokyo
+   sudo timedatectl set-timezone Asia/Tokyo
+
+PS
+8. show japanese date format
+    date +"%Y-%m-%d %H:%M"
+    2019-01-27 08:17
+
+
