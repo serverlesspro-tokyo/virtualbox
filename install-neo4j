@@ -1,0 +1,76 @@
+Install Neo4j.
+version 3.5.2
+
+Ref. https://neo4j.com/download-center/
+Ref.guidebook of linxu installation
+https://neo4j.com/docs/operations-manual/current/installation/linux/tarball/
+
+1. import neo4j gpg key
+rpm --import https://debian.neo4j.org/neotechnology.gpg.key
+
+vi /etc/yum.repos.d/neo4j.repo
+[neo4j]
+name=Neo4j RPM Repository
+baseurl=https://yum.neo4j.org/stable
+enabled=1
+gpgcheck=1
+
+
+2.yum info neo4j
+```
+yum info neo4j
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+epel/x86_64/metalink                                                                             | 8.4 kB  00:00:00
+epel/x86_64/metalink                                                                             | 8.4 kB  00:00:00
+ * base: ftp-srv2.kddilabs.jp
+ * epel: ftp.yz.yamagata-u.ac.jp
+ * extras: ftp-srv2.kddilabs.jp
+ * updates: ftp-srv2.kddilabs.jp
+base                                                                                             | 3.6 kB  00:00:00
+extras                                                                                           | 3.4 kB  00:00:00
+neo4j                                                                                            | 2.9 kB  00:00:00
+updates                                                                                          | 3.4 kB  00:00:00
+neo4j/primary_db                                                                                 |  50 kB  00:00:02
+Available Packages
+Name        : neo4j
+Arch        : noarch
+Version     : 3.5.2
+Release     : 1
+Size        : 95 M
+Repo        : neo4j
+Summary     : Neo4j server is a database that stores data as graphs rather than tables.
+URL         : http://neo4j.org/
+License     : GPLv3
+Description :
+            : Neo4j is a highly scalable, native graph database purpose-built to
+            : leverage not only data but also its relationships.
+```
+
+3. yum install neo4j-3.5.2
+
+4. neo4j --version
+
+6. start neo4j service.
+   systemctl enable neo4j
+   systemctl start neo4j
+
+7. check 
+   ulimit -n
+   if result is 1000, add the following into /etc/security/limits.conf
+   neo4j   soft    nofile  40000
+   neo4j   hard    nofile  40000
+   
+   and add the following into /etc/pam.d/su
+   session    required   pam_limits.so
+   
+8.  vi /etc/neo4j/neo4j.conf
+
+dbms.memory.heap.initial_size=512m
+dbms.memory.heap.max_size=512m
+dbms.memory.pagecache.size=10g
+
+
+
+
+
