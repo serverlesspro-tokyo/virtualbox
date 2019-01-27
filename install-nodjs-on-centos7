@@ -12,3 +12,25 @@ source ~/.bash_profile
 nodenv install  11.5.0
 node -v
 
+#for global using.
+nodenv global 11.5.0
+
+#for local using
+# nodenv local 11.5.0
+
+2. nodenv versions
+* 11.5.0 (set by /home/vagrant/.nodenv/version)
+
+   nodenv version up by 
+   cd $(nodenv root)
+   git pull
+
+3. node-build udpate
+   cd $(nodenv root)/plugins/node-build
+   git pull
+
+done!
+
+
+
+
