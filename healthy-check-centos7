@@ -1,0 +1,229 @@
+#centos version check
+cat /etc/redhat-release
+
+#memory
+free
+              total        used        free      shared  buff/cache   available
+Mem:        1014820      268816      356816        6820      389188      579972
+Swap:       2097148           0     2097148
+
+#disk vol
+df
+ 
+Filesystem                      1K-blocks      Used Available Use% Mounted on
+/dev/mapper/centos_centos7-root  30385668   2483812  27901856   9% /
+devtmpfs                           495724         0    495724   0% /dev
+tmpfs                              507408         0    507408   0% /dev/shm
+tmpfs                              507408      6820    500588   2% /run
+tmpfs                              507408         0    507408   0% /sys/fs/cgroup
+/dev/sda1                         1038336    129576    908760  13% /boot
+vagrant_data                    222536700 192016008  30520692  87% /vagrant_data
+tmpfs                              101484         0    101484   0% /run/user/1000
+
+#i node 
+df -i
+
+Filesystem                        Inodes IUsed    IFree IUse% Mounted on
+/dev/mapper/centos_centos7-root 15200256 66324 15133932    1% /
+devtmpfs                          123931   333   123598    1% /dev
+tmpfs                             126852     1   126851    1% /dev/shm
+tmpfs                             126852   427   126425    1% /run
+tmpfs                             126852    16   126836    1% /sys/fs/cgroup
+/dev/sda1                         524288   292   523996    1% /boot
+vagrant_data                        1000     0     1000    0% /vagrant_data
+tmpfs                             126852     1   126851    1% /run/user/1000
+
+#var folder's 
+du -sk /var/* | sort -nr  | head -5
+
+513552  /var/lib
+85044   /var/cache
+81296   /var/tmp
+2444    /var/log
+16      /var/spool
+
+#free disk size
+pvdisplay
+
+--- Physical volume ---
+  PV Name               /dev/sda2
+  VG Name               centos_centos7
+  PV Size               <31.00 GiB / not usable 3.00 MiB
+  Allocatable           yes
+  PE Size               4.00 MiB
+  Total PE              7935
+  Free PE               1
+  Allocated PE          7934
+  PV UUID               0zLX30-8YPc-PBZh-S5gk-nqYy-Owdq-wfSuNc
+
+#monitoring listening port
+netstat -an | grep LISTEN   
+## or using netstat -nlt 
+
+tcp        0      0 127.0.0.1:27017         0.0.0.0:*               LISTEN
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN
+tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN
+tcp6       0      0 :::3306                 :::*                    LISTEN
+tcp6       0      0 :::22                   :::*                    LISTEN
+unix  2      [ ACC ]     STREAM     LISTENING     25424    public/pickup
+unix  2      [ ACC ]     STREAM     LISTENING     25660    /var/lib/mysql/mysql.sock
+
+#特定のPortはだれに利用されているか
+lsof -i:22
+COMMAND  PID    USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+sshd    3246    root    3u  IPv4  24106      0t0  TCP *:ssh (LISTEN)
+sshd    3246    root    4u  IPv6  24108      0t0  TCP *:ssh (LISTEN)
+
+#特定のファイルはだれに利用されているか
+ lsof /var/log/messages
+
+COMMAND   PID USER   FD   TYPE DEVICE SIZE/OFF     NODE NAME
+rsyslogd 3244 root    6w   REG  253,0   416801 17023319 /var/log/messages
+
+or , use the following.
+fuser /var/log/messages
+/var/log/messages:    3244
+
+#プロセスが掴んでいるファイル一覧が知りたい
+lsof -p 1
+COMMAND PID USER   FD      TYPE             DEVICE SIZE/OFF       NODE NAME
+systemd   1 root  cwd       DIR              253,0      244         64 /
+systemd   1 root  rtd       DIR              253,0      244         64 /
+systemd   1 root  txt       REG              253,0  1616360   33585314 /usr/lib/systemd/systemd
+
+#プロセス内のスレッドの数を確認したい。
+ps aux -L
+SER       PID   LWP %CPU NLWP %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1     1  0.0    1  0.3 125568  3940 ?        Ss   23:00   0:00 /usr/lib/systemd/systemd --switched-root --s
+root         2     2  0.0    1  0.0      0     0 ?        S    23:00   0:00 [kthreadd]
+root         3     3  0.0    1  0.0      0     0 ?        S    23:00   0:00 [ksoftirqd/0]
+
+#稼動しているプロセスを検索したい。
+pgrep -l syslolog
+3244 rsyslogd
+
+#プロセスのメモリマップを確認したい
+pmap -x 1298
+1298:   [xfsaild/dm-0]
+Address           Kbytes     RSS   Dirty Mode  Mapping
+00007fff38b12000       8       4       0 r-x--   [ anon ]
+ffffffffff600000       4       0       0 r-x--   [ anon ]
+---------------- ------- ------- -------
+total kB          125572    3940    1332
+
+#ロードアベレージと稼動時間確認
+高いの場合、CPU待ちかIO待ちのプロセスが多い
+uptiime
+ 23:29:22 up 28 min,  1 user,  load average: 0.00, 0.01, 0.02
+ 
+#CPU使用率を定期的に取得したい。
+vmstat 5
+procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+ 3  0      0 348648   2108 392640    0    0    75     5  158  209  0  0 99  0  0
+ 
+ procの項目：
+
+r　…　実行可能で、「実行キュー」に入っているプロセスの数。
+b　…　本来は実行可能なプロセスであるが、I/O待ちなどの何らかの理由で待ちとなっているプロセスの数
+bの数が大きいとI/O負荷等が大きいことが予想される。
+rが大きいとCPUの負荷が大きく、ユーザに遅いと感じさせている可能性がある。
+
+systemの項目：
+
+in 1秒当たりの割り込みの回数
+cs 1秒当たりのコンテキストスイッチの回数
+cpuの項目：
+
+us　…　ユーザーが使用したCPUの割合（%）
+sy　…　システムが使用したCPUの割合（%）
+id　…　CPUアイドル時間の割合(100 - us - sy)（%）
+wa　…　IO待ち時間
+
+#以下でも確認でる
+sar -p 5
+Linux 3.10.0-957.1.3.el7.x86_64 (centos7.localdomain)   2019年01月27日  _x86_64_        (2 CPU)
+
+23時32分57秒     CPU     %user     %nice   %system   %iowait    %steal     %idle
+23時33分02秒     all      0.20      0.00      0.20      0.00      0.00     99.60
+23時34分02秒     all      0.10      0.00      0.10      0.00      0.00     99.80
+
+平均値:      all      0.13      0.00      0.14      0.00      0.00     99.73
+
+#ディスクI/O使用率を定期的に取得
+vmstat -d 5
+disk- ------------reads------------ ------------writes----------- -----IO------
+       total merged sectors      ms  total merged sectors      ms    cur    sec
+sda     9897      3  553175    8850   3236    144   35700    5795      0      5
+dm-0    8780      0  527389    8589   3153      0   31604    7923      0      4
+dm-1      91      0    5176      34      0      0       0       0      0      0
+
+read/writeの項目：
+total　…　読み書きに成功した総数
+ms　…　読み書きに使用した時間
+
+#特定のユーザの使用しているプロセスのCPU/メモリ使用率を知る
+top -u mysql
+
+top - 23:36:54 up 36 min,  1 user,  load average: 0.00, 0.03, 0.05
+Tasks: 107 total,   1 running, 106 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.2 us,  0.2 sy,  0.0 ni, 99.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  1014820 total,   347712 free,   271816 used,   395292 buff/cache
+KiB Swap:  2097148 total,  2097148 free,        0 used.   574156 avail Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+ 3439 mysql     20   0  747676 117408   6300 S   0.0 11.6   0:02.47 mysqld
+ 
+#ネットワークに正常にパケットが送受信できているか確認
+netstat -i
+
+Kernel Interface table
+Iface             MTU    RX-OK RX-ERR RX-DRP RX-OVR    TX-OK TX-ERR TX-DRP TX-OVR Flg
+eth0             1500     3220      0      0 0          1929      0      0      0 BMRU
+eth1             1500        3      0      0 0            12      0      0      0 BMRU
+lo              65536      160      0      0 0           160      0      0      0 LRU
+
+RXが受信、TXが送信。
+
+OK　…　正常に送受信できたパケット数
+ERR　…　送受信でエラーとなったパケット数
+DRP　…　送受信時に破棄したパケット数
+OVR　…　送受信時にオーバーロードしたパケット数。受信側のバッファを越えてパケット送信されたとき などがこれに該当する。
+
+#ユーザのログイン履歴
+last | head -5
+vagrant  pts/0        10.0.2.2         Sun Jan 27 23:01   still logged in
+reboot   system boot  3.10.0-957.1.3.e Sun Jan 27 23:00 - 23:39  (00:38)
+vagrant  pts/0        10.0.2.2         Sun Jan 27 20:26 - 22:59  (02:33)
+reboot   system boot  3.10.0-957.1.3.e Sun Jan 27 20:24 - 23:39  (03:15)
+vagrant  pts/0        10.0.2.2         Sun Jan 27 19:49 - 20:21  (00:32)
+
+lastlog -u root
+Username         Port     From             Latest
+root             pts/0                     日  1月 27 23:10:30 +0900 2019
+
+#processの親子関係
+pstree
+systemd─┬─NetworkManager─┬─dhclient
+        │                └─2*[{NetworkManager}]
+        ├─VBoxService───7*[{VBoxService}]
+        ├─agetty
+        ├─auditd───{auditd}
+        ├─chronyd
+        ├─crond
+        ├─dbus-daemon
+        ├─firewalld───{firewalld}
+        ├─haveged
+        ├─irqbalance
+        ├─lvmetad
+        ├─master─┬─pickup
+        │        └─qmgr
+        ├─mongod───19*[{mongod}]
+        ├─mysqld_safe───mysqld───22*[{mysqld}]
+        ├─polkitd───6*[{polkitd}]
+        ├─rsyslogd───2*[{rsyslogd}]
+        ├─sshd───sshd───sshd───bash───sudo───su───bash───pstree
+        ├─systemd-journal
+        ├─systemd-logind
+        ├─systemd-udevd
+        └─tuned───4*[{tuned}]
