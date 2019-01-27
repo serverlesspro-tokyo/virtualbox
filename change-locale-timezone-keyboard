@@ -1,4 +1,7 @@
 1. config ja
+ sudo yum -y update
+ sudo yum -y install glibc-common　
+ 
  localectl list-locales | grep -i ja
  
  if not exist, run
