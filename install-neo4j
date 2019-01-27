@@ -83,7 +83,7 @@ dbms.connector.http.listen_address=0.0.0.0:7474
 9. firewall setting
 firewall-cmd --permanent --zone=public --add-port=7473/tcp 
 firewall-cmd --permanent --zone=public --add-port=7474/tcp 
-firewall-cmd --permanent --zone=public --add-port=7867/tcp 
+firewall-cmd --permanent --zone=public --add-port=7687/tcp 
 firewall-cmd --reload
 
 10. Vagrant file/open port
