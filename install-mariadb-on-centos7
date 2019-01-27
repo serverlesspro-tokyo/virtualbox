@@ -1,0 +1,30 @@
+Version mariadb-10.0
+
+#repo setup
+curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash -s -- --mariadb-server-version=mariadb-10.0
+
+sudo yum -y install MariaDB-server MariaDB-client
+sudo systemctl enable mysql
+sudo systemctl start mysql
+
+mysql_secure_installation
+
+#
+sudo cp /etc/my.cnf.d/server.cnf /etc/my.cnf.d/server.cnf.org
+sudo vi /etc/my.cnf.d/server.cnf
+
+[mysqld]
+character-set-server=utf8mb4　
+collation-server=utf8mb4_unicode_ci
+
+#
+sudo cp /etc/my.cnf.d/client.cnf /etc/my.cnf.d/client.cnf.org
+sudo vi /etc/my.cnf.d/client.cnf
+[client]
+default-character-set=utf8mb4
+
+#
+sudo systemctl enable mysql
+sudo systemctl start mysql
+systemctl status mysql
+ 
