@@ -1,0 +1,28 @@
+sudo vi /etc/yum.repos.d/nginx.repo
+[nginx]
+name=nginx repo
+baseurl=http://nginx.org/packages/mainline/centos/7/$basearch/
+gpgcheck=0
+enabled=1
+
+sudo yum install nginx
+nginx -v
+
+sudo systemctl enable nginx
+sudo systemctl start nginx
+
+#listen 80 port and proxy to 3000 if you hosting a nodejs+express app
+sudo vi /etc/nginx/conf.d/server.conf
+server {
+     listen 80;
+     # アクセス可能なIPアドレス、もしくはドメイン
+     server_name localhost;
+     proxy_set_header X-Real-IP $remote_addr;
+     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+     proxy_set_header Host $http_host;
+     proxy_redirect off;
+     proxy_max_temp_file_size 0;
+     location / {
+        proxy_pass http://localhost:3000;
+     }
+}
