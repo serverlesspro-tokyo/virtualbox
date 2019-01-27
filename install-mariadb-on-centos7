@@ -7,7 +7,15 @@ sudo yum -y install MariaDB-server MariaDB-client
 sudo systemctl enable mysql
 sudo systemctl start mysql
 
-mysql_secure_installation
+sudo mysql_secure_installation
+** password: Secret
+
+mysql -uroot -p
+
+#only for test account
+create user 'Secret'@localhost identified by 'Secret';
+grant all on *.* to 'Secret'@localhost identified by 'Secret';
+FLUSH PRIVILEGES;
 
 #
 sudo cp /etc/my.cnf.d/server.cnf /etc/my.cnf.d/server.cnf.org
@@ -27,4 +35,6 @@ default-character-set=utf8mb4
 sudo systemctl enable mysql
 sudo systemctl start mysql
 systemctl status mysql
+
+
  
