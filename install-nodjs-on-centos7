@@ -29,6 +29,8 @@ nodenv global 11.5.0
    cd $(nodenv root)/plugins/node-build
    git pull
 
+4. npm install -g forever
+
 done!
 
 
