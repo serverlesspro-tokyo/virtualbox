@@ -1,0 +1,14 @@
+1. install nodejs
+sudo yum install -y git gcc gcc-c++
+sudo yum -y update
+
+git clone https://github.com/nodenv/nodenv.git ~/.nodenv
+git clone https://github.com/nodenv/node-build.git ~/.nodenv/plugins/node-build
+
+echo 'export PATH="$HOME/.nodenv/bin:$PATH"' >> ~/.bash_profile
+echo 'eval "$(nodenv init -)"' >> ~/.bash_profile
+source ~/.bash_profile
+
+nodenv install  11.5.0
+node -v
+
