@@ -29,7 +29,8 @@ sudo vi /opt/streamsets-datacollector/SampleData/TestFile.csv
 1,Hello
 2,World
 
-12. sudo systemctl start sdc
+12. sudo systemctl enable sdc
+    sudo systemctl start sdc
 
 13. http://localhost:18630/
  *need to open port 18630 on both guest centos and virtualbox forwardport(vagrant file).
@@ -41,5 +42,5 @@ firewall-cmd --reload
  13-2. Vagrant file/open port
   config.vm.network "forwarded_port", guest: 18630, host: 18630, host_ip: "127.0.0.1"
   
- 13-3. vagrant reload. and then open http://localhost:18630/
+ 13-3. vagrant reload. and then open http://localhost:18630/ or  http://127.0.0.1:18630/  
   
