@@ -87,9 +87,9 @@ firewall-cmd --permanent --zone=public --add-port=7867/tcp
 firewall-cmd --reload
 
 10. Vagrant file/open port
-  config.vm.network :forwarded_port, guest: 7474, host: 7474, host_ip: "127.0.0.1"
-  config.vm.network :forwarded_port, guest: 7687, host: 7687, host_ip: "127.0.0.1"
-  config.vm.network :forwarded_port, guest: 7473, host: 7473, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 7474, host: 7474, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 7687, host: 7687, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 7473, host: 7473, host_ip: "127.0.0.1"
 
 10. http://127.0.0.1:7474
 
