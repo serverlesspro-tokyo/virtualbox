@@ -94,3 +94,9 @@ firewall-cmd --reload
 10. http://127.0.0.1:7474
 
 11. vagrant package
+
+----------------
+file paths
+/var/lib/neo4j/data
+/etc/neo4j/neo4j.conf
+etc
